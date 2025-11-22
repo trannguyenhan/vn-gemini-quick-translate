@@ -1,0 +1,30 @@
+{
+    "manifest_version": 3,
+    "name": "Gemini Quick Translate",
+    "version": "1.0",
+    "description": "Quickly translate selected text using Gemini AI.",
+    "icons": {
+        "16": "icons/16.png",
+        "48": "icons/48.png",
+        "128": "icons/128.png"
+    },
+    "background": {
+      "service_worker": "background.js"
+    },
+    "permissions": ["activeTab", "scripting", "storage"],
+    "host_permissions": ["<all_urls>"],
+    "action": {
+      "default_popup": "popup.html",
+      "default_icon": "icons/128.png"
+    },
+    "commands": {
+      "_execute_action": {
+        "suggested_key": {
+          "default": "Alt+Q",
+          "mac": "Alt+Q"
+        },
+        "description": "Open Gemini Translate Popup"
+      }
+    },
+    "options_page": "options.html"
+  }

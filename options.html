@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Gemini Translate Options</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        transition: all 0.3s ease;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        width: 450px;
+        padding: 30px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        margin: 0 auto;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .container {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        padding: 30px;
+        animation: slideIn 0.4s ease-out;
+      }
+
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      h2 {
+        color: #2d3748;
+        margin-bottom: 25px;
+        text-align: center;
+        font-size: 24px;
+        font-weight: 600;
+        letter-spacing: -0.5px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 10px;
+        font-weight: 600;
+        color: #4a5568;
+        font-size: 14px;
+        letter-spacing: 0.3px;
+      }
+
+      input[type="text"], select {
+        width: 100%;
+        padding: 12px 16px;
+        margin-bottom: 0;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        font-size: 14px;
+        background-color: #f7fafc;
+        color: #2d3748;
+        transition: all 0.3s ease;
+        outline: none;
+      }
+
+      input[type="text"]:focus, select:focus {
+        border-color: #667eea;
+        background-color: white;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        transform: translateY(-1px);
+      }
+
+      input[type="text"]:hover, select:hover {
+        border-color: #cbd5e0;
+        background-color: white;
+      }
+
+      select {
+        cursor: pointer;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23667eea' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 16px center;
+        padding-right: 40px;
+      }
+
+      #customModelContainer {
+        overflow: hidden;
+        max-height: 0;
+        opacity: 0;
+        transition: max-height 0.4s ease-out, opacity 0.3s ease-out, margin 0.3s ease-out;
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+
+      #customModelContainer.show {
+        max-height: 200px;
+        opacity: 1;
+        margin-top: 15px;
+        margin-bottom: 5px;
+      }
+
+      button {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 14px 24px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 600;
+        display: block;
+        width: 100%;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        transition: all 0.3s ease;
+        margin-top: 10px;
+        letter-spacing: 0.5px;
+      }
+
+      button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+      }
+
+      button:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 10px rgba(102, 126, 234, 0.4);
+      }
+
+      #statusMessage {
+        margin-top: 20px;
+        padding: 14px 16px;
+        border-radius: 10px;
+        font-size: 14px;
+        text-align: center;
+        font-weight: 500;
+        animation: fadeIn 0.3s ease-out;
+        border-left: 4px solid;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .success {
+        background: #d4edda;
+        color: #155724;
+        border-left-color: #28a745;
+        box-shadow: 0 2px 8px rgba(40, 167, 69, 0.2);
+      }
+
+      .error {
+        background: #f8d7da;
+        color: #721c24;
+        border-left-color: #dc3545;
+        box-shadow: 0 2px 8px rgba(220, 53, 69, 0.2);
+      }
+
+      .info {
+        background: #e2e8f0;
+        color: #4a5568;
+        border-left-color: #cbd5e0;
+        box-shadow: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Gemini API Key & Model Settings</h2>
+
+      <div class="form-group">
+        <label for="geminiApiKeyInput">Enter your Gemini API Key:</label>
+        <input type="text" id="geminiApiKeyInput" placeholder="sk-...">
+      </div>
+
+      <div class="form-group">
+        <label for="geminiModelSelect">Select Gemini Model:</label>
+        <select id="geminiModelSelect">
+          <option value="gemini-2.5-flash">gemini-2.5-flash (Requires access)</option>
+          <option value="gemini-2.5-pro">gemini-2.5-pro (Requires access)</option>
+          <option value="custom">Custom (Enter model name)</option>
+        </select>
+      </div>
+
+      <div id="customModelContainer">
+        <div class="form-group">
+          <label for="customModelInput">Custom Model Name:</label>
+          <input type="text" id="customModelInput" placeholder="e.g., gemini-3.5-pro">
+        </div>
+      </div>
+
+      <button id="saveSettingsButton">Save Settings</button>
+      <div id="statusMessage"></div>
+    </div>
+
+    <script src="options.js"></script>
+  </body>
+</html>
