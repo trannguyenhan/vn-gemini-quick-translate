@@ -2,6 +2,7 @@ const geminiApiKeyInput = document.getElementById("geminiApiKeyInput");
 const geminiModelSelect = document.getElementById("geminiModelSelect");
 const customModelContainer = document.getElementById("customModelContainer");
 const customModelInput = document.getElementById("customModelInput");
+const enableQuickTranslateToggle = document.getElementById("enableQuickTranslateToggle");
 const saveSettingsButton = document.getElementById("saveSettingsButton");
 const statusMessageDiv = document.getElementById("statusMessage");
 
@@ -10,7 +11,7 @@ saveSettingsButton.addEventListener("click", saveSettings);
 geminiModelSelect.addEventListener("change", handleModelSelectChange);
 
 async function loadSettings() {
-  const data = await chrome.storage.local.get(["geminiApiKey", "geminiApiModel"]);
+  const data = await chrome.storage.local.get(["geminiApiKey", "geminiApiModel", "enableQuickTranslate"]);
   if (data.geminiApiKey) {
     geminiApiKeyInput.value = data.geminiApiKey;
   }
@@ -36,6 +37,13 @@ async function loadSettings() {
     geminiModelSelect.value = geminiModelSelect.options[0].value;
   }
 
+  // Load toggle setting (mặc định là true nếu chưa có)
+  if (data.enableQuickTranslate !== undefined) {
+    enableQuickTranslateToggle.checked = data.enableQuickTranslate;
+  } else {
+    enableQuickTranslateToggle.checked = true; // Mặc định bật
+  }
+
   if (data.geminiApiKey || data.geminiApiModel) {
     displayStatus("Settings loaded.", "info");
   } else {
@@ -59,6 +67,7 @@ function handleModelSelectChange() {
 async function saveSettings() {
   const key = geminiApiKeyInput.value.trim();
   let model = geminiModelSelect.value;
+  const enableQuickTranslate = enableQuickTranslateToggle.checked;
 
   // Nếu chọn custom, lấy giá trị từ input custom
   if (model === "custom") {
@@ -72,7 +81,8 @@ async function saveSettings() {
   if (key) {
     await chrome.storage.local.set({
       geminiApiKey: key,
-      geminiApiModel: model
+      geminiApiModel: model,
+      enableQuickTranslate: enableQuickTranslate
     });
     displayStatus("Settings saved successfully!", "success");
   } else {

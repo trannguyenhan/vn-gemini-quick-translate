@@ -1,4 +1,5 @@
 const inputText = document.getElementById("inputText");
+const askAIButton = document.getElementById("askAIButton");
 const translateButton = document.getElementById("translateButton");
 const resultDiv = document.getElementById("result");
 const apiKeyErrorContainer = document.getElementById("apiKeyErrorContainer");
@@ -8,10 +9,96 @@ const settingsSection = document.getElementById("settingsSection");
 const clearApiKeyButton = document.getElementById("clearApiKeyButton");
 const targetLanguageSelect = document.getElementById("targetLanguageSelect");
 
+// Function để parse markdown thành HTML
+function parseMarkdown(text) {
+    if (!text) return '';
+    
+    let html = text;
+    
+    // Xử lý lists trước (để không bị ảnh hưởng bởi bold/italic)
+    // Unordered lists - * item hoặc - item (chỉ khi ở đầu dòng)
+    const lines = html.split('\n');
+    let inList = false;
+    let listItems = [];
+    let processedLines = [];
+    
+    for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        const listMatch = line.match(/^[\*\-]\s+(.+)$/);
+        
+        if (listMatch) {
+            if (!inList) {
+                inList = true;
+                listItems = [];
+            }
+            listItems.push(listMatch[1]);
+        } else {
+            if (inList) {
+                processedLines.push('<ul>' + listItems.map(item => `<li>${item}</li>`).join('') + '</ul>');
+                listItems = [];
+                inList = false;
+            }
+            processedLines.push(line);
+        }
+    }
+    
+    if (inList && listItems.length > 0) {
+        processedLines.push('<ul>' + listItems.map(item => `<li>${item}</li>`).join('') + '</ul>');
+    }
+    
+    html = processedLines.join('\n');
+    
+    // Xử lý bold và italic - phải xử lý bold trước (vì nó dài hơn)
+    // Bold __text__ (2 dấu gạch dưới) - xử lý trước để tránh conflict
+    html = html.replace(/__([^_]+?)__/g, '<strong>$1</strong>');
+    // Bold **text** (2 dấu sao)
+    html = html.replace(/\*\*([^*]+?)\*\*/g, '<strong>$1</strong>');
+    
+    // Italic _text_ (1 dấu gạch dưới, không phải 2)
+    // Chỉ match khi không có dấu gạch dưới liền kề
+    html = html.replace(/([^_])_([^_\n]+?)_([^_])/g, '$1<em>$2</em>$3');
+    html = html.replace(/^_([^_\n]+?)_([^_])/gm, '<em>$1</em>$2');
+    html = html.replace(/([^_])_([^_\n]+?)_$/gm, '$1<em>$2</em>');
+    
+    // Italic *text* (1 dấu sao, không phải 2)
+    // Chỉ match khi không có dấu sao liền kề
+    html = html.replace(/([^*])\*([^*\n]+?)\*([^*])/g, '$1<em>$2</em>$3');
+    html = html.replace(/^\*([^*\n]+?)\*([^*])/gm, '<em>$1</em>$2');
+    html = html.replace(/([^*])\*([^*\n]+?)\*$/gm, '$1<em>$2</em>');
+    
+    // Code `text`
+    html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+    
+    // Headers
+    html = html.replace(/^###\s+(.+)$/gm, '<h3>$1</h3>');
+    html = html.replace(/^##\s+(.+)$/gm, '<h2>$1</h2>');
+    html = html.replace(/^#\s+(.+)$/gm, '<h1>$1</h1>');
+    
+    // Links [text](url)
+    html = html.replace(/\[([^\]]+)\]\(([^\)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
+    
+    // Xử lý paragraphs và line breaks
+    const paragraphs = html.split(/\n\n+/);
+    html = paragraphs.map(p => {
+        p = p.trim();
+        if (!p) return '';
+        // Nếu đã là HTML tag thì không wrap
+        if (p.startsWith('<')) {
+            return p;
+        }
+        // Thay \n thành <br>
+        p = p.replace(/\n/g, '<br>');
+        return `<p>${p}</p>`;
+    }).filter(p => p).join('');
+    
+    return html;
+}
+
 // Ẩn/hiện các thành phần chính của popup
 function showTranslationUI() {
   inputText.style.display = "block";
   targetLanguageSelect.style.display = "block";
+  askAIButton.style.display = "block";
   translateButton.style.display = "block";
   resultDiv.style.display = "block";
   apiKeyErrorContainer.style.display = "none";
@@ -22,6 +109,7 @@ function showTranslationUI() {
 function showApiKeyErrorUI() {
   inputText.style.display = "none";
   targetLanguageSelect.style.display = "none";
+  askAIButton.style.display = "none";
   translateButton.style.display = "none";
   resultDiv.style.display = "none";
   apiKeyErrorContainer.style.display = "block";
@@ -52,6 +140,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
 // Lắng nghe sự kiện nhấn nút dịch
 translateButton.addEventListener("click", translateText);
+
+// Lắng nghe sự kiện nhấn nút Ask AI
+askAIButton.addEventListener("click", askAI);
 
 // Lắng nghe sự kiện nhấn phím Enter trong ô nhập liệu
 inputText.addEventListener("keydown", (event) => {
@@ -90,6 +181,40 @@ clearApiKeyButton.addEventListener("click", async () => {
   }
 });
 
+async function askAI() {
+  const textToAsk = inputText.value.trim();
+  if (!textToAsk) {
+    resultDiv.textContent = "Please enter text to ask AI.";
+    return;
+  }
+
+  const data = await chrome.storage.local.get(["geminiApiKey", "geminiApiModel"]);
+  if (!data.geminiApiKey || !data.geminiApiModel) {
+    showApiKeyErrorUI();
+    return;
+  }
+
+  resultDiv.innerHTML = '<span class="loading">Asking AI...</span>';
+
+  // Gửi message đến background script để xử lý
+  chrome.runtime.sendMessage(
+    { type: "ASK_GEMINI", text: textToAsk },
+    (response) => {
+      if (chrome.runtime.lastError) {
+        resultDiv.innerHTML = `<span class="error">Error: ${chrome.runtime.lastError.message}</span>`;
+        return;
+      }
+
+      if (response && response.success && response.data) {
+        resultDiv.innerHTML = parseMarkdown(response.data);
+      } else {
+        const errorMsg = response?.error || "Unknown error occurred.";
+        resultDiv.innerHTML = `<span class="error">Error: ${errorMsg}</span>`;
+      }
+    }
+  );
+}
+
 async function translateText() {
   const textToTranslate = inputText.value.trim();
   if (!textToTranslate) {
@@ -98,10 +223,7 @@ async function translateText() {
   }
 
   const data = await chrome.storage.local.get(["geminiApiKey", "geminiApiModel"]);
-  const GEMINI_API_KEY = data.geminiApiKey;
-  const GEMINI_API_MODEL = data.geminiApiModel || "gemini-pro";
-
-  if (!GEMINI_API_KEY || !GEMINI_API_MODEL) {
+  if (!data.geminiApiKey || !data.geminiApiModel) {
     showApiKeyErrorUI();
     return;
   }
@@ -117,37 +239,25 @@ async function translateText() {
     await chrome.storage.local.set({ targetLanguage: targetLanguageSelect.value });
   }
 
-  const prompt = `Translate the following text to ${targetLanguage}. Provide only the translation, no explanations or additional text. Keep it concise and preserve the complete meaning: "${textToTranslate}"`;
-
-  try {
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_API_MODEL}:generateContent?key=${GEMINI_API_KEY}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-        }),
+  // Gửi message đến background script để xử lý
+  chrome.runtime.sendMessage(
+    { 
+      type: "TRANSLATE_GEMINI", 
+      text: textToTranslate,
+      targetLang: targetLanguage
+    },
+    (response) => {
+      if (chrome.runtime.lastError) {
+        resultDiv.innerHTML = `<span class="error">Error: ${chrome.runtime.lastError.message}</span>`;
+        return;
       }
-    );
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(`API Error: ${response.status} - ${errorData.error.message || 'Unknown error'}`);
+      if (response && response.success && response.data) {
+        resultDiv.innerHTML = parseMarkdown(response.data);
+      } else {
+        const errorMsg = response?.error || "Unknown error occurred.";
+        resultDiv.innerHTML = `<span class="error">Error: ${errorMsg}</span>`;
+      }
     }
-
-    const data = await response.json();
-    if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0]) {
-      const translatedText = data.candidates[0].content.parts[0].text;
-      resultDiv.textContent = translatedText;
-    } else {
-      resultDiv.innerHTML = '<span class="error">Translation failed: Invalid response from Gemini API.</span>';
-      console.error("Invalid Gemini API response structure:", data);
-    }
-  } catch (error) {
-    console.error("Error translating text with Gemini:", error);
-    resultDiv.innerHTML = `<span class="error">Error: ${error.message}. Please check your API key and network connection.</span>`;
-  }
+  );
 }

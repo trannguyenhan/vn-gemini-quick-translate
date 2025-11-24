@@ -13,7 +13,7 @@
         width: 400px;
         padding: 0;
         margin: 0;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: #5B9BD5;
         min-height: 100vh;
       }
 
@@ -38,16 +38,12 @@
       }
 
       h3 {
-        color: #2d3748;
+        color: #5B9BD5;
         margin-top: 0;
         margin-bottom: 20px;
         font-size: 22px;
         font-weight: 600;
         letter-spacing: -0.5px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
         text-align: center;
       }
 
@@ -68,9 +64,9 @@
       }
 
       textarea:focus {
-        border-color: #667eea;
+        border-color: #5B9BD5;
         background-color: white;
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        box-shadow: 0 0 0 3px rgba(91, 155, 213, 0.1);
       }
 
       textarea:hover {
@@ -79,7 +75,7 @@
       }
 
       button {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: #5B9BD5;
         color: white;
         padding: 12px 20px;
         border: none;
@@ -88,19 +84,21 @@
         font-size: 15px;
         font-weight: 600;
         width: 100%;
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        box-shadow: 0 4px 15px rgba(91, 155, 213, 0.4);
         letter-spacing: 0.3px;
         margin-bottom: 10px;
       }
 
       button:hover {
+        background: #4A8BC2;
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        box-shadow: 0 6px 20px rgba(91, 155, 213, 0.5);
       }
 
       button:active {
+        background: #3D7BA8;
         transform: translateY(0);
-        box-shadow: 0 2px 10px rgba(102, 126, 234, 0.4);
+        box-shadow: 0 2px 10px rgba(91, 155, 213, 0.4);
       }
 
       .btn-secondary {
@@ -134,6 +132,62 @@
         font-size: 14px;
         line-height: 1.6;
         word-wrap: break-word;
+      }
+
+      #result strong {
+        font-weight: 600;
+        color: #2d3748;
+      }
+
+      #result em {
+        font-style: italic;
+      }
+
+      #result code {
+        background-color: #e2e8f0;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-family: 'Courier New', monospace;
+        font-size: 13px;
+      }
+
+      #result ul, #result ol {
+        margin: 10px 0;
+        padding-left: 25px;
+      }
+
+      #result li {
+        margin: 5px 0;
+      }
+
+      #result h1, #result h2, #result h3 {
+        margin: 15px 0 10px 0;
+        font-weight: 600;
+      }
+
+      #result h1 {
+        font-size: 20px;
+      }
+
+      #result h2 {
+        font-size: 18px;
+      }
+
+      #result h3 {
+        font-size: 16px;
+      }
+
+      #result p {
+        margin: 10px 0;
+      }
+
+      #result a {
+        color: #667eea;
+        text-decoration: none;
+      }
+
+      #result a:hover {
+        text-decoration: underline;
       }
 
       .loading {
@@ -179,11 +233,12 @@
 
       .error-message-container button {
         margin-top: 0;
-        background: linear-gradient(135deg, #f0ad4e 0%, #ec971f 100%);
+        background: #f0ad4e;
         box-shadow: 0 4px 15px rgba(240, 173, 78, 0.4);
       }
 
       .error-message-container button:hover {
+        background: #ec971f;
         box-shadow: 0 6px 20px rgba(240, 173, 78, 0.5);
       }
 
@@ -267,7 +322,10 @@
         </select>
       </div>
 
-      <button id="translateButton">Translate with Gemini</button>
+      <div class="button-group" style="display: flex; gap: 10px; margin-bottom: 10px;">
+        <button id="askAIButton" style="flex: 1; margin-bottom: 0;">Ask AI</button>
+        <button id="translateButton" style="flex: 1; margin-bottom: 0;">Translate</button>
+      </div>
       <div id="result"></div>
 
       <div id="apiKeyErrorContainer" class="error-message-container" style="display: none;">

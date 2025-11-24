@@ -12,7 +12,7 @@
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
         width: 450px;
         padding: 30px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: #5B9BD5;
         margin: 0 auto;
         min-height: 100vh;
         display: flex;
@@ -40,16 +40,12 @@
       }
 
       h2 {
-        color: #2d3748;
+        color: #5B9BD5;
         margin-bottom: 25px;
         text-align: center;
         font-size: 24px;
         font-weight: 600;
         letter-spacing: -0.5px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
       }
 
       .form-group {
@@ -79,9 +75,9 @@
       }
 
       input[type="text"]:focus, select:focus {
-        border-color: #667eea;
+        border-color: #5B9BD5;
         background-color: white;
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        box-shadow: 0 0 0 3px rgba(91, 155, 213, 0.1);
         transform: translateY(-1px);
       }
 
@@ -93,7 +89,7 @@
       select {
         cursor: pointer;
         appearance: none;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23667eea' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%235B9BD5' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
         background-repeat: no-repeat;
         background-position: right 16px center;
         padding-right: 40px;
@@ -116,7 +112,7 @@
       }
 
       button {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: #5B9BD5;
         color: white;
         padding: 14px 24px;
         border: none;
@@ -126,20 +122,22 @@
         font-weight: 600;
         display: block;
         width: 100%;
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        box-shadow: 0 4px 15px rgba(91, 155, 213, 0.4);
         transition: all 0.3s ease;
         margin-top: 10px;
         letter-spacing: 0.5px;
       }
 
       button:hover {
+        background: #4A8BC2;
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        box-shadow: 0 6px 20px rgba(91, 155, 213, 0.5);
       }
 
       button:active {
+        background: #3D7BA8;
         transform: translateY(0);
-        box-shadow: 0 2px 10px rgba(102, 126, 234, 0.4);
+        box-shadow: 0 2px 10px rgba(91, 155, 213, 0.4);
       }
 
       #statusMessage {
@@ -184,6 +182,95 @@
         border-left-color: #cbd5e0;
         box-shadow: none;
       }
+
+      .toggle-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 15px;
+        padding: 16px;
+        background-color: #f7fafc;
+        border-radius: 10px;
+        border: 2px solid #e2e8f0;
+        transition: all 0.3s ease;
+      }
+
+      .toggle-container:hover {
+        border-color: #cbd5e0;
+        background-color: white;
+      }
+
+      .toggle-container label:first-of-type {
+        margin: 0;
+        padding: 0;
+        flex: 1;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        color: #4a5568;
+        padding-right: 16px;
+        line-height: 1.4;
+        display: block;
+      }
+
+      .toggle-switch {
+        position: relative;
+        width: 44px;
+        height: 24px;
+        flex-shrink: 0;
+        margin: 0;
+        display: flex;
+        align-items: center;
+      }
+
+      .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+
+      .toggle-slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #cbd5e0;
+        transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border-radius: 24px;
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .toggle-slider:before {
+        position: absolute;
+        content: "";
+        height: 18px;
+        width: 18px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border-radius: 50%;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      }
+
+      .toggle-switch input:checked + .toggle-slider {
+        background: #5B9BD5;
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1), 0 0 0 3px rgba(91, 155, 213, 0.1);
+      }
+
+      .toggle-switch input:checked + .toggle-slider:before {
+        transform: translateX(20px);
+      }
+
+      .toggle-switch:hover .toggle-slider {
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1), 0 0 0 3px rgba(91, 155, 213, 0.15);
+      }
+
+      .toggle-switch input:focus + .toggle-slider {
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1), 0 0 0 3px rgba(91, 155, 213, 0.2);
+      }
     </style>
   </head>
   <body>
@@ -209,6 +296,14 @@
           <label for="customModelInput">Custom Model Name:</label>
           <input type="text" id="customModelInput" placeholder="e.g., gemini-3.5-pro">
         </div>
+      </div>
+
+      <div class="toggle-container">
+        <label for="enableQuickTranslateToggle">Quick Translate Popup</label>
+        <label class="toggle-switch">
+          <input type="checkbox" id="enableQuickTranslateToggle" checked>
+          <span class="toggle-slider"></span>
+        </label>
       </div>
 
       <button id="saveSettingsButton">Save Settings</button>

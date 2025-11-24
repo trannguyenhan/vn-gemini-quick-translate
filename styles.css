@@ -1,0 +1,262 @@
+/* styles.css - Styles cho popup trên trang web */
+
+/* Popup hành động nhỏ khi bôi đen */
+#gemini-quick-translate-action-popup {
+    position: fixed;
+    background: #5B9BD5;
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(91, 155, 213, 0.4), 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: 8px;
+    z-index: 2147483647;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 14px;
+    display: flex;
+    gap: 8px;
+    animation: popupFadeIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    backdrop-filter: blur(10px);
+}
+
+@keyframes popupFadeIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.8) translateY(-5px);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+@keyframes popupFadeOut {
+    0% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(0.8) translateY(-5px);
+    }
+}
+
+#gemini-quick-translate-action-popup button {
+    padding: 10px 18px;
+    border: none;
+    background: rgba(255, 255, 255, 0.95);
+    color: #5B9BD5;
+    cursor: pointer;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+#gemini-quick-translate-action-popup button::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(91, 155, 213, 0.1);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+#gemini-quick-translate-action-popup button:hover {
+    background: rgba(255, 255, 255, 1);
+    color: #4A8BC2;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(91, 155, 213, 0.3);
+}
+
+#gemini-quick-translate-action-popup button:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+#gemini-quick-translate-action-popup button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(91, 155, 213, 0.2);
+}
+
+#gemini-quick-translate-action-popup button:first-child {
+    background: rgba(255, 255, 255, 0.95);
+}
+
+#gemini-quick-translate-action-popup button:last-child {
+    background: rgba(255, 255, 255, 0.95);
+}
+
+/* Popup hiển thị kết quả */
+#gemini-quick-translate-result-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 600px;
+    max-height: 80vh;
+    background: white;
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(91, 155, 213, 0.2);
+    padding: 24px;
+    z-index: 2147483647;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    animation: resultPopupFadeIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes resultPopupFadeIn {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.9);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+@keyframes resultPopupFadeOut {
+    0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.9);
+    }
+}
+
+#gemini-quick-translate-result-popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+#gemini-quick-translate-result-popup-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #5B9BD5;
+}
+
+#gemini-quick-translate-result-popup-close-btn {
+    background: none;
+    border: none;
+    font-size: 28px;
+    cursor: pointer;
+    color: #777;
+    padding: 0 8px;
+    line-height: 1;
+    transition: color 0.2s;
+}
+
+#gemini-quick-translate-result-popup-close-btn:hover {
+    color: #333;
+}
+
+#gemini-quick-translate-result-popup-content {
+    overflow-y: auto;
+    line-height: 1.6;
+    font-size: 15px;
+    color: #444;
+    flex-grow: 1;
+}
+
+#gemini-quick-translate-result-popup-content strong {
+    font-weight: 600;
+    color: #2d3748;
+}
+
+#gemini-quick-translate-result-popup-content em {
+    font-style: italic;
+}
+
+#gemini-quick-translate-result-popup-content code {
+    background-color: #e2e8f0;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+}
+
+#gemini-quick-translate-result-popup-content ul,
+#gemini-quick-translate-result-popup-content ol {
+    margin: 10px 0;
+    padding-left: 25px;
+}
+
+#gemini-quick-translate-result-popup-content li {
+    margin: 5px 0;
+}
+
+#gemini-quick-translate-result-popup-content h1,
+#gemini-quick-translate-result-popup-content h2,
+#gemini-quick-translate-result-popup-content h3 {
+    margin: 15px 0 10px 0;
+    font-weight: 600;
+    color: #2d3748;
+}
+
+#gemini-quick-translate-result-popup-content h1 {
+    font-size: 20px;
+}
+
+#gemini-quick-translate-result-popup-content h2 {
+    font-size: 18px;
+}
+
+#gemini-quick-translate-result-popup-content h3 {
+    font-size: 16px;
+}
+
+#gemini-quick-translate-result-popup-content p {
+    margin: 10px 0;
+}
+
+#gemini-quick-translate-result-popup-content a {
+    color: #5B9BD5;
+    text-decoration: none;
+}
+
+#gemini-quick-translate-result-popup-content a:hover {
+    text-decoration: underline;
+}
+
+#gemini-quick-translate-result-popup-content.loading::after {
+    content: 'Đang tải...';
+    display: block;
+    text-align: center;
+    font-style: italic;
+    color: #888;
+    padding: 20px;
+}
+
+.gqt-spinner {
+    border: 4px solid rgba(91, 155, 213, 0.1);
+    border-top: 4px solid #5B9BD5;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: gqt-spin 0.8s linear infinite;
+    margin: 20px auto;
+    box-shadow: 0 0 20px rgba(91, 155, 213, 0.3);
+}
+
+@keyframes gqt-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
